@@ -2,6 +2,7 @@
   "name": "chatta-med-soc",
   "version": "1.0.0",
   "type": "module",
+  "description": "Chatbot för Socialtjänstlagen med PII-skydd",
   "dependencies": {
     "openai": "^4.20.0"
   }
