@@ -1,0 +1,54 @@
+{
+  "sources": [
+    {
+      "category": "Lagtexter",
+      "files": [
+        {
+          "name": "Socialtjänstlagen 2025",
+          "path": "lagtexter/socialtjanstlagen_2025.txt",
+          "priority": "high"
+        },
+        {
+          "name": "Offentlighets- och sekretesslagen",
+          "path": "lagtexter/offentlighets_och_sekretesslagen.txt",
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "category": "Kommuninformation",
+      "files": [
+        {
+          "name": "Organisation och ansvar",
+          "path": "kommuninfo/organisation.txt",
+          "priority": "high"
+        },
+        {
+          "name": "Rutiner och riktlinjer",
+          "path": "kommuninfo/rutiner_och_riktlinjer.txt",
+          "priority": "high"
+        },
+        {
+          "name": "Kontaktuppgifter",
+          "path": "kommuninfo/kontaktuppgifter.txt",
+          "priority": "medium"
+        }
+      ]
+    },
+    {
+      "category": "Kunskapsbas",
+      "files": [
+        {
+          "name": "Vanliga frågor",
+          "path": "kunskapsbas/vanliga_fragor.txt",
+          "priority": "medium"
+        },
+        {
+          "name": "Exempel på ärenden",
+          "path": "kunskapsbas/exempel_arenden.txt",
+          "priority": "low"
+        }
+      ]
+    }
+  ]
+}
