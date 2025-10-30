@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatta med soc</title>
+    <title>Chatta med socialtjänsten - Karlskoga kommun</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -163,7 +163,7 @@
             background: rgba(255, 87, 51, 0.2);
             padding: 14px;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 13px;
             margin-top: 12px;
             border: 2px solid rgba(255, 255, 255, 0.3);
             font-weight: 500;
@@ -239,7 +239,7 @@
             color: white;
         }
 
-        .law-reference {
+        .sources-reference {
             background: #D2EFE7;
             border-left: 4px solid #00A78B;
             padding: 12px;
@@ -249,10 +249,42 @@
             color: #0F6F60;
         }
 
-        .law-reference strong {
+        .sources-reference strong {
             display: block;
             margin-bottom: 5px;
         }
+
+        /* === FORMATERING FÖR LISTOR OCH TEXT (NYTT!) === */
+        .message-content ul {
+            margin: 12px 0;
+            padding-left: 20px;
+            list-style-type: disc;
+        }
+
+        .message-content ul li {
+            margin: 6px 0;
+            line-height: 1.6;
+        }
+
+        .message-content ol {
+            margin: 12px 0;
+            padding-left: 20px;
+        }
+
+        .message-content ol li {
+            margin: 6px 0;
+            line-height: 1.6;
+        }
+
+        .message-content strong {
+            color: #362E7D;
+            font-weight: 600;
+        }
+
+        .message-content p {
+            margin: 10px 0;
+        }
+        /* === SLUT PÅ NYTT === */
 
         .input-container {
             padding: 20px;
@@ -356,7 +388,7 @@
             background: white;
             border-radius: 18px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            max-width: 200px;
+            max-width: 220px;
         }
 
         .loading-dots {
@@ -403,6 +435,15 @@
             50% { opacity: 0.7; }
         }
 
+        .sources-status {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin-top: 8px;
+            text-align: left;
+        }
+
         @media (max-width: 768px) {
             .global-header { padding: 15px 20px; }
             .logo { height: 35px; }
@@ -429,27 +470,34 @@
         }
     </style>
 </head>
-<body>
-  
+
+    <!-- SLUT PÅ HEADER OCH SIDEBAR -->
 
     <div class="container">
         <div class="header">
             <h1>💬 Chatta med socialtjänsten</h1>
-            <p class="warning">🚫 VIKTIGT: Skriv ALDRIG personuppgifter här! Inga personnummer, fullständiga namn, adresser, telefonnummer eller e-postadresser. Chatten blockerar automatiskt meddelanden med personuppgifter.</p>
+            <p class="warning">
+                📅 Baserad på <strong>nya Socialtjänstlagen (2025)</strong> <br>
+                🚫 <strong>VIKTIGT:</strong> Skriv ALDRIG in personuppgifter i denna chatt! Inga personnummer, namn, adresser, telefon eller e-post.<br>
+                Chatten blockerar automatiskt meddelanden med personuppgifter.
+            </p>
+            <div class="sources-status" id="sourcesStatus">
+                📚 Laddar kunskapskällor...
+            </div>
         </div>
         
         <div id="chat-container" class="chat-container">
             <div class="message bot-message">
                 <div class="message-avatar">AI</div>
                 <div class="message-content">
-                    Hej! Jag är din AI-assistent för frågor om socialtjänsten.<br><br>
-                    📚 Jag kan hjälpa dig med:<br>
-                    • Socialnämndens ansvar och uppgifter<br>
-                    • Rättigheter och skyldigheter<br>
-                    • Handläggning och utredningar<br>
-                    • Barn och ungdomars rättigheter<br>
-                    • Missbruks- och beroendevård<br><br>
-                    <strong>⚠️ Skydda personuppgifter:</strong> Använd <em>aldrig</em> riktiga namn, personnummer eller andra identifierande uppgifter. Formulera dina frågor generellt.<br><br>
+                    Hej! Jag är din AI-assistent för <strong>Karlskoga kommuns socialtjänst</strong>.<br><br>
+                    📚 Jag kan hjälpa dig med frågor om:<br>
+                    • <strong>Nya Socialtjänstlagen (2025)</strong><br>
+                    • Kommunens rutiner och riktlinjer<br>
+                    • Organisation och ansvar<br>
+                    • Handläggningsprocesser<br>
+                    • Vanliga frågor och exempel<br><br>
+                    <strong>⚠️ Skydda personuppgifter:</strong> Använd <em>aldrig</em> namn, personnummer eller andra identifierande uppgifter. Formulera dina frågor generellt.<br><br>
                     <em>Exempel:</em> "Vilka regler gäller för biståndsbedömning?" istället för "Kan Anna Andersson få bistånd?"<br><br>
                     Vad vill du veta?
                 </div>
@@ -479,7 +527,8 @@
         // === KONFIGURATION ===
         const API_URL = 'https://chatta-med-soc.vercel.app/api/chat';
         
-        let socialtjanstlagen = '';
+        let allSources = {};
+        let sourceConfig = null;
         let isLoading = false;
         let hasDetectedPII = false;
 
@@ -568,31 +617,91 @@
             }
         }
 
-        async function loadSocialtjanstlagen() {
+        // === LADDA KÄLLOR ===
+        async function loadSourceConfig() {
             try {
-                const response = await fetch('./data/lagtexter/socialtjanstlagen.txt');
+                const response = await fetch('./data/sources.json');
                 if (response.ok) {
-                    socialtjanstlagen = await response.text();
-                    console.log('✓ Socialtjänstlagen laddad:', socialtjanstlagen.length, 'tecken');
-                } else {
-                    console.warn('Kunde inte ladda socialtjänstlagen från fil');
+                    sourceConfig = await response.json();
+                    console.log('✓ Källkonfiguration laddad');
+                    return true;
                 }
             } catch (error) {
-                console.error('Fel vid laddning av socialtjänstlagen:', error);
+                console.error('❌ Kunde inte ladda källkonfiguration:', error);
+            }
+            return false;
+        }
+
+        async function loadAllSources() {
+            if (!sourceConfig) {
+                console.warn('⚠️ Ingen källkonfiguration laddad');
+                return {};
+            }
+            
+            const sources = {};
+            let totalLoaded = 0;
+            let totalFiles = 0;
+            
+            // Räkna totalt antal filer
+            for (const category of sourceConfig.sources) {
+                totalFiles += category.files.length;
+            }
+            
+            console.log(`📚 Laddar ${totalFiles} källor...`);
+            updateSourcesStatus(`Laddar ${totalFiles} källor...`);
+            
+            // Ladda alla filer
+            for (const category of sourceConfig.sources) {
+                console.log(`\n📂 Kategori: ${category.category}`);
+                
+                for (const file of category.files) {
+                    try {
+                        const response = await fetch(`./data/${file.path}`);
+                        if (response.ok) {
+                            const content = await response.text();
+                            sources[file.name] = {
+                                content: content,
+                                category: category.category,
+                                priority: file.priority,
+                                path: file.path
+                            };
+                            totalLoaded++;
+                            console.log(`  ✓ ${file.name} (${content.length} tecken)`);
+                            updateSourcesStatus(`Laddat ${totalLoaded}/${totalFiles} källor...`);
+                        } else {
+                            console.warn(`  ⚠️ Kunde inte ladda: ${file.name}`);
+                        }
+                    } catch (error) {
+                        console.error(`  ❌ Fel vid laddning av ${file.name}:`, error);
+                    }
+                }
+            }
+            
+            console.log(`\n✅ Totalt laddade: ${totalLoaded}/${totalFiles} källor`);
+            updateSourcesStatus(`✅ ${totalLoaded} källor laddade och redo`);
+            
+            return sources;
+        }
+
+        function updateSourcesStatus(message) {
+            const statusElement = document.getElementById('sourcesStatus');
+            if (statusElement) {
+                statusElement.textContent = message;
             }
         }
 
-        function addMessage(content, isUser = false, hasLawReference = false) {
+        // === MEDDELANDEN ===
+        function addMessage(content, isUser = false, sourcesUsed = []) {
             const container = document.getElementById('chat-container');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
             
-            let lawReferenceHtml = '';
-            if (hasLawReference && !isUser) {
-                lawReferenceHtml = `
-                    <div class="law-reference">
-                        <strong>📖 Källa:</strong>
-                        Socialtjänstlagen (2025:400)
+            let sourcesHtml = '';
+            if (sourcesUsed.length > 0 && !isUser) {
+                sourcesHtml = `
+                    <div class="sources-reference">
+                        <strong>📖 Källor:</strong>
+                        ${sourcesUsed.join(' • ')}
                     </div>
                 `;
             }
@@ -601,7 +710,7 @@
                 <div class="message-avatar">${isUser ? 'Du' : 'AI'}</div>
                 <div class="message-content">
                     ${content}
-                    ${lawReferenceHtml}
+                    ${sourcesHtml}
                 </div>
             `;
             
@@ -617,7 +726,7 @@
             loadingDiv.innerHTML = `
                 <div class="message-avatar">AI</div>
                 <div class="loading">
-                    <span>🤔 genererar ett svar...</span>
+                    <span>🤔 genererar svar...</span>
                     <div class="loading-dots">
                         <span></span>
                         <span></span>
@@ -634,6 +743,7 @@
             if (loading) loading.remove();
         }
 
+        // === SKICKA MEDDELANDE ===
         async function sendMessage() {
             if (isLoading) return;
             
@@ -658,14 +768,18 @@
             addLoadingMessage();
 
             try {
+                // Förbered källor att skicka
+                const sourcesToSend = {};
+                for (const [name, source] of Object.entries(allSources)) {
+                    sourcesToSend[name] = source.content;
+                }
+
                 const response = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         message: message,
-                        lawTexts: {
-                            socialtjanstlagen: socialtjanstlagen
-                        }
+                        sources: sourcesToSend
                     })
                 });
 
@@ -688,7 +802,16 @@
                 }
 
                 const data = await response.json();
-                addMessage(data.response, false, true);
+                
+                // Identifiera vilka källor som användes (baserat på innehåll i svaret)
+                const usedSources = Object.keys(allSources).filter(sourceName => {
+                    const lowerMessage = message.toLowerCase();
+                    const lowerResponse = data.response.toLowerCase();
+                    const lowerSource = sourceName.toLowerCase();
+                    return lowerMessage.includes(lowerSource) || lowerResponse.includes(lowerSource);
+                });
+
+                addMessage(data.response, false, usedSources);
 
             } catch (error) {
                 removeLoadingMessage();
@@ -700,6 +823,7 @@
             }
         }
 
+        // === EVENT LISTENERS ===
         document.getElementById('user-input').addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 120) + 'px';
@@ -717,6 +841,7 @@
 
         document.getElementById('send-button').addEventListener('click', sendMessage);
 
+        // === SIDEBAR ===
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
@@ -732,8 +857,22 @@
             });
         });
 
-        window.addEventListener('load', () => {
-            loadSocialtjanstlagen();
+        // === INITIALISERING ===
+        window.addEventListener('load', async () => {
+            console.log('🚀 Startar applikation...');
+            
+            // Ladda konfiguration först
+            const configLoaded = await loadSourceConfig();
+            
+            if (configLoaded) {
+                // Ladda alla källor
+                allSources = await loadAllSources();
+                console.log('📊 Källor redo:', Object.keys(allSources).length);
+            } else {
+                console.error('⚠️ Kunde inte ladda källkonfiguration');
+                updateSourcesStatus('⚠️ Kunde inte ladda källor');
+            }
+            
             checkInputForPII();
         });
     </script>
