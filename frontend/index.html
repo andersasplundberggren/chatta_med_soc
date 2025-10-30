@@ -1,1 +1,40 @@
-
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juridisk Rådgivningschatbot</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Juridisk Rådgivningschatbot</h1>
+            <p class="warning">⚠️ Dela aldrig personuppgifter (personnummer, namn, adress, etc.)</p>
+        </div>
+        
+        <div id="chat-container" class="chat-container">
+            <div class="message bot-message">
+                Hej! Jag kan hjälpa dig med frågor om lagtext och juridisk information. 
+                Hur kan jag hjälpa dig idag?
+            </div>
+        </div>
+        
+        <div class="input-container">
+            <textarea 
+                id="user-input" 
+                placeholder="Skriv din fråga här..." 
+                rows="3"
+            ></textarea>
+            <button id="send-button">Skicka</button>
+        </div>
+        
+        <div id="pii-warning" class="pii-warning hidden">
+            <strong>⚠️ Varning!</strong> Ditt meddelande verkar innehålla personuppgifter. 
+            Ta bort personnummer, namn, adresser eller annan känslig information innan du skickar.
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
