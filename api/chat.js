@@ -97,8 +97,11 @@ Svara ENDAST med JA eller NEJ, inget annat.`
 
 VIKTIGA REGLER:
 - Svara ALLTID på svenska
-- Basera dina svar på den medföljande lagtexten
+- Basera dina svar på den medföljande lagtexten från 2025 års version
+- Det är VIKTIGT att du vet att detta är NYA lagen som ersatte 2001 års lag
+- Nämn ALDRIG den gamla lagen från 2001 - hänvisa endast till gällande lag
 - Var tydlig, koncis och pedagogisk
+- Skriv dina svar med ett enkelt språk
 - Hänvisa till specifika paragrafer när relevant
 - Om frågan inte kan besvaras utifrån lagtexten, säg det
 - Detta är allmän information, inte juridisk rådgivning
