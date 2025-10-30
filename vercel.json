@@ -1,0 +1,23 @@
+{
+  "functions": {
+    "api/chat.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
+}
+```
+
+---
+
+## Deploya till Vercel
+
+### **Alternativ A: Via Vercel Dashboard (Enklast)**
+
+1. Gå till [vercel.com](https://vercel.com)
+2. Logga in med GitHub
+3. **Add New** → **Project**
+4. Välj ditt `chatta_med_soc` repo
+5. Under **Environment Variables**, lägg till:
+```
+   OPENAI_API_KEY = din-api-nyckel
