@@ -35,7 +35,7 @@ export default async function handler(req, res) {
     }
 
     try {
-        const { message, lawTexts } = req.body;
+        const { message, sources } = req.body;
 
         if (!message || typeof message !== 'string') {
             return res.status(400).json({ error: 'Ogiltigt meddelande' });
@@ -92,41 +92,63 @@ Svara ENDAST med JA eller NEJ, inget annat.`
             });
         }
 
-        // Bygg kontext från Socialtjänstlagen
-        let context = `Du är en hjälpsam assistent som svarar på frågor om Socialtjänstlagen (2001:453).
+        // Bygg kontext från alla källor
+        let context = `Du är en hjälpsam assistent för Karlskoga kommuns socialtjänst.
 
 VIKTIGA REGLER:
 - Svara ALLTID på svenska
-- Basera dina svar på den medföljande lagtexten från 2025 års version
-- Det är VIKTIGT att du vet att detta är NYA lagen som ersatte 2001 års lag
-- Nämn ALDRIG den gamla lagen från 2001 - hänvisa endast till gällande lag
+- Basera dina svar på tillgängliga källor nedan
+- Gällande lag är nya Socialtjänstlagen (2025) som trädde i kraft maj 2025
+- Prioritera lagtext framför annat material
+- Referera till kommunens rutiner och riktlinjer när relevant
 - Var tydlig, koncis och pedagogisk
-- Skriv dina svar med ett enkelt språk
-- Hänvisa till specifika paragrafer när relevant
-- Om frågan inte kan besvaras utifrån lagtexten, säg det
+- Skriv alla svar med ett enkelt språk
+- Hänvisa till specifika källor och paragrafer när relevant
+- Om frågan inte kan besvaras utifrån källorna, säg det ärligt
 - Detta är allmän information, inte juridisk rådgivning
 - Påminn ALDRIG användaren om att skriva personuppgifter
 
 `;
 
-        if (lawTexts && lawTexts.socialtjanstlagen) {
-            // Begränsa till 8000 tecken för att hålla nere kostnader
-            const truncatedLaw = lawTexts.socialtjanstlagen.substring(0, 8000);
-            context += `\nSOCIALTJÄNSTLAGEN (2001:453):\n\n${truncatedLaw}\n\n`;
+        if (sources && Object.keys(sources).length > 0) {
+            context += `TILLGÄNGLIGA KÄLLOR:\n\n`;
+            
+            // Begränsa total text för att hålla nere kostnader
+            const MAX_TOTAL_CHARS = 12000;
+            let currentChars = 0;
+            
+            // Konvertera sources till array och sortera efter längd (kortare först för att få med fler källor)
+            const sourceEntries = Object.entries(sources).sort((a, b) => a[1].length - b[1].length);
+            
+            for (const [name, content] of sourceEntries) {
+                const remainingChars = MAX_TOTAL_CHARS - currentChars;
+                
+                if (remainingChars <= 500) {
+                    console.log(`Nått maxgräns för text, hoppar över: ${name}`);
+                    break;
+                }
+                
+                // Ta så mycket text som får plats
+                const excerpt = content.substring(0, Math.min(content.length, remainingChars));
+                context += `\n=== ${name.toUpperCase()} ===\n${excerpt}\n\n`;
+                currentChars += excerpt.length;
+            }
+            
+            console.log(`Använder ${currentChars} tecken från ${Object.keys(sources).length} källor`);
         } else {
-            context += `\nOBS: Lagtexten kunde inte laddas. Svara baserat på din allmänna kunskap om Socialtjänstlagen.\n\n`;
+            context += `\nOBS: Inga källor kunde laddas. Svara baserat på din allmänna kunskap om Socialtjänstlagen och socialtjänst.\n\n`;
         }
 
         console.log('Generating response...');
         // Generera svar
         const completion = await openai.chat.completions.create({
-            model: 'gpt-4o-mini', // Billigare modell, perfekt för denna användning
+            model: 'gpt-4o-mini',
             messages: [
                 { role: 'system', content: context },
                 { role: 'user', content: message }
             ],
             temperature: 0.7,
-            max_tokens: 800
+            max_tokens: 1000
         });
 
         const response = completion.choices[0].message.content;
