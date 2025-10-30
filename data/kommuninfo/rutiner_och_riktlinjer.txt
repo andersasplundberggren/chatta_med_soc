@@ -1,0 +1,99 @@
+RUTINER OCH RIKTLINJER - KARLSKOGA KOMMUN SOCIALTJÄNST
+
+=== ANSÖKAN OM BISTÅND ===
+
+Ansökningsprocess
+1. Ansökan görs skriftligt eller muntligt
+2. Handläggare utses inom 1 arbetsdag
+3. Behovsutredning påbörjas
+4. Beslut fattas inom lagstadgad tid
+
+Utredning
+- Hembesök genomförs vid behov
+- Intervjuer med sökande
+- Inhämtande av samtycke för kontakter
+- Samråd med andra myndigheter vid behov
+
+Beslut
+- Skriftligt beslut med motivering
+- Information om överklagande
+- Uppföljning planeras
+
+=== HANDLÄGGNINGSTIDER ===
+
+Ekonomiskt bistånd
+- Beslut inom 1 vecka för nya ärenden
+- Löpande utbetalningar: senast den 25:e varje månad
+- Akut bistånd: Samma dag
+
+Barn och unga
+- Bedömning av oro: Inom 24 timmar
+- Utredning enligt 11 kap: Max 4 månader
+- Fortsatt utredning: Max 10 månader totalt
+
+Äldre och funktionsnedsättning
+- Initial bedömning: Inom 2 veckor
+- Beslut om hemtjänst: Inom 3 månader
+- Akuta behov: Omedelbart
+
+=== DOKUMENTATION ===
+
+Obligatorisk dokumentation
+- Alla kontakter med klient dokumenteras
+- Beslut och utredningar
+- Uppföljningar och utvärderingar
+
+Journalföring
+- Enligt Socialstyrelsens föreskrifter
+- Säker hantering enligt GDPR
+- Arkivering enligt kommunens arkivregler
+
+=== SEKRETESS OCH TYSTNADSPLIKT ===
+
+Sekretess gäller för:
+- All information om enskilda
+- Uppgifter som kan identifiera person
+- Känsliga personuppgifter
+
+Undantag från sekretess
+- När lag kräver anmälan (t.ex. oro för barn)
+- Med klientens samtycke
+- Vid myndighetskontakter för utredning
+
+=== ANMÄLNINGSSKYLDIGHET ===
+
+Personal ska omedelbart anmäla:
+- Oro för barns säkerhet eller utveckling
+- Misstanke om våld i nära relationer
+- Kännedom om hedersrelaterat våld
+
+Anmälan görs till:
+- Närmaste chef
+- Socialjour (utanför kontorstid)
+- Direkt till mottagning för barn och unga
+
+=== KVALITETSSÄKRING ===
+
+Regelbunden uppföljning av:
+- Handläggningstider
+- Klientnöjdhet
+- Måluppfyllelse
+- Avvikelser och klagomål
+
+Kvalitetsindikatorer
+- Andel beslut inom lagstadgad tid
+- Andel överklaganden
+- Klientenkäter
+- Medarbetarenkäter
+
+=== KLAGOMÅL OCH SYNPUNKTER ===
+
+Hantering av klagomål
+1. Klagomål tas emot av handläggare eller chef
+2. Utreds och besvaras inom 3 veckor
+3. Dokumenteras i verksamhetssystem
+4. Analyseras för förbättringsarbete
+
+Formella klagomål
+- Överklagande av beslut: Till förvaltningsrätt
+- Anmälan om missförhållande: Till IVO (Inspektionen för vård och omsorg)
