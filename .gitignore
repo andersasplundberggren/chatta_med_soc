@@ -1,1 +1,24 @@
+# Dependencies
+node_modules/
 
+# Environment variables (API-nycklar)
+.env
+.env.local
+.env.production
+
+# Vercel
+.vercel
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS-filer
+.DS_Store
+Thumbs.db
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
