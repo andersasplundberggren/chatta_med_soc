@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatta med soc</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #5863C7 0%, #362E7D 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .global-header {
+            background: white;
+            width: 100%;
+            max-width: 1200px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-section { display: flex; align-items: center; gap: 15px; }
+
+        .logo {
+            height: 45px;
+            background: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(88, 99, 199, 0.1);
+        }
+
+        .logo-text {
+            font-size: 24px; 
+            font-weight: 700; 
+            color: #362E7D;
+            text-decoration: none; 
+            transition: color 0.3s ease;
+        }
+        .logo-text:hover { color: #5863C7; }
+
+        .menu-toggle { 
+            background: #5863C7; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px;
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            font-weight: 600;
+            transition: all .3s ease; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px;
+        }
+        .menu-toggle:hover { background: #362E7D; transform: scale(1.05); }
+        
+        .sidebar {
+            position: fixed; 
+            top: 0; 
+            right: -350px; 
+            width: 350px; 
+            height: 100vh;
+            background: white; 
+            box-shadow: -5px 0 25px rgba(0,0,0,0.2);
+            transition: right 0.3s ease; 
+            z-index: 10000; 
+            overflow-y: auto;
+        }
+        .sidebar.show { right: 0; }
+        
+        .sidebar-overlay {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%;
+            background: rgba(0,0,0,0.5); 
+            z-index: 9999; 
+            display: none;
+        }
+        .sidebar-overlay.show { display: block; }
+        
+        .sidebar-header {
+            background: linear-gradient(135deg, #362E7D, #5863C7);
+            color: white; 
+            padding: 25px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
+        .sidebar-header h3 { font-size: 22px; margin: 0; }
+        
+        .close-btn {
+            background: rgba(255,255,255,0.2); 
+            border: none; 
+            color: white; 
+            font-size: 24px;
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            cursor: pointer; 
+            transition: all .3s ease;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        .close-btn:hover { background: rgba(255,255,255,0.3); transform: rotate(90deg); }
+        
+        .sidebar nav { padding: 0; }
+        .sidebar nav ul { list-style: none; padding: 0; margin: 0; }
+        .sidebar nav li { border-bottom: 1px solid #f0f0f0; }
+        .sidebar nav a {
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            padding: 18px 25px;
+            text-decoration: none; 
+            color: #333; 
+            font-size: 16px; 
+            font-weight: 500; 
+            transition: all .3s ease;
+        }
+        .sidebar nav a:hover { background: #EFF2FF; color: #5863C7; padding-left: 30px; }
+        .sidebar nav a span:first-child { font-size: 22px; width: 30px; text-align: center; }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 85vh;
+            max-height: 800px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #362E7D 0%, #5863C7 100%);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin-bottom: 10px;
+            font-size: 26px;
+        }
+
+        .warning {
+            background: rgba(255, 87, 51, 0.2);
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-top: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-weight: 500;
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #EFF2FF;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user-message {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            max-width: 75%;
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .user-message .message-content {
+            background: #5863C7;
+            color: white;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 2px 10px rgba(88, 99, 199, 0.3);
+        }
+
+        .bot-message .message-content {
+            background: white;
+            color: #333;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin: 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .user-message .message-avatar {
+            background: #5863C7;
+            color: white;
+            order: 1;
+        }
+
+        .bot-message .message-avatar {
+            background: #00A78B;
+            color: white;
+        }
+
+        .law-reference {
+            background: #D2EFE7;
+            border-left: 4px solid #00A78B;
+            padding: 12px;
+            margin-top: 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #0F6F60;
+        }
+
+        .law-reference strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            position: relative;
+        }
+
+        #user-input {
+            flex: 1;
+            min-height: 48px;
+            max-height: 120px;
+            padding: 14px 18px;
+            border: 2px solid #DBDEF4;
+            border-radius: 24px;
+            font-family: inherit;
+            font-size: 15px;
+            resize: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        #user-input:focus {
+            border-color: #5863C7;
+        }
+
+        #user-input.has-pii {
+            border-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        #send-button {
+            width: 48px;
+            height: 48px;
+            border: none;
+            background: #5863C7;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        #send-button:hover:not(:disabled) {
+            background: #362E7D;
+            transform: scale(1.08);
+        }
+
+        #send-button:disabled {
+            background: #DBDEF4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .pii-warning {
+            margin: 15px 20px 0;
+            padding: 16px;
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            color: #856404;
+            animation: shake 0.5s;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .pii-warning.error {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .pii-warning-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 18px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 200px;
+        }
+
+        .loading-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .loading-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #5863C7;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        .pii-indicator {
+            position: absolute;
+            right: 80px;
+            bottom: 34px;
+            background: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: none;
+            animation: pulse 1s infinite;
+        }
+
+        .pii-indicator.show {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @media (max-width: 768px) {
+            .global-header { padding: 15px 20px; }
+            .logo { height: 35px; }
+            .logo-text { font-size: 20px; }
+            .sidebar { width: 100%; right: -100%; }
+            .container { 
+                height: calc(100vh - 100px); 
+                max-height: none;
+                border-radius: 15px;
+            }
+            .message-content { max-width: 85%; }
+            .header h1 { font-size: 22px; }
+            .pii-indicator { right: 70px; bottom: 30px; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .global-header { margin-bottom: 10px; border-radius: 10px; }
+            .container { border-radius: 10px; }
+            .header { padding: 20px 15px; }
+            .chat-container { padding: 15px; }
+            .input-container { padding: 15px; }
+            .pii-indicator { right: 60px; }
+        }
+    </style>
+</head>
+<body>
+  
+
+    <div class="container">
+        <div class="header">
+            <h1>💬 Chatta med socialtjänsten</h1>
+            <p class="warning">🚫 VIKTIGT: Skriv ALDRIG personuppgifter här! Inga personnummer, fullständiga namn, adresser, telefonnummer eller e-postadresser. Chatten blockerar automatiskt meddelanden med personuppgifter.</p>
+        </div>
+        
+        <div id="chat-container" class="chat-container">
+            <div class="message bot-message">
+                <div class="message-avatar">AI</div>
+                <div class="message-content">
+                    Hej! Jag är din AI-assistent för frågor om socialtjänsten.<br><br>
+                    📚 Jag kan hjälpa dig med:<br>
+                    • Socialnämndens ansvar och uppgifter<br>
+                    • Rättigheter och skyldigheter<br>
+                    • Handläggning och utredningar<br>
+                    • Barn och ungdomars rättigheter<br>
+                    • Missbruks- och beroendevård<br><br>
+                    <strong>⚠️ Skydda personuppgifter:</strong> Använd <em>aldrig</em> riktiga namn, personnummer eller andra identifierande uppgifter. Formulera dina frågor generellt.<br><br>
+                    <em>Exempel:</em> "Vilka regler gäller för biståndsbedömning?" istället för "Kan Anna Andersson få bistånd?"<br><br>
+                    Vad vill du veta?
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-container">
+            <div class="pii-indicator" id="piiIndicator">🚫 Personuppgifter detekterade</div>
+            <textarea 
+                id="user-input" 
+                placeholder="Skriv din fråga här (utan personuppgifter)..." 
+                rows="1"
+            ></textarea>
+            <button id="send-button">➤</button>
+        </div>
+        
+        <div id="pii-warning" class="pii-warning hidden">
+            <span class="pii-warning-icon">🚫</span>
+            <div>
+                <strong>Meddelandet blockerat!</strong><br>
+                <span id="pii-warning-text">Din text innehåller personuppgifter som inte får skickas. Ta bort all identifierbar information och försök igen.</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === KONFIGURATION ===
+        const API_URL = 'https://chatta-med-soc.vercel.app/api/chat';
+        
+        let socialtjanstlagen = '';
+        let isLoading = false;
+        let hasDetectedPII = false;
+
+        // === UTÖKAD PII-DETEKTION (Frontend - Första försvarslinjen) ===
+        const PII_PATTERNS = {
+            personnummer: {
+                pattern: /\b(19|20)?\d{6}[-\s]?\d{4}\b/g,
+                message: "personnummer"
+            },
+            samordningsnummer: {
+                pattern: /\b(19|20)?\d{2}(0[1-9]|1[0-2])(6[1-9]|7[0-9]|8[0-9]|9[0-1])\d{4}\b/g,
+                message: "samordningsnummer"
+            },
+            email: {
+                pattern: /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
+                message: "e-postadress"
+            },
+            telefon: {
+                pattern: /\b(0|\+46)[-\s]?\d{1,3}[-\s]?\d{5,8}\b/g,
+                message: "telefonnummer"
+            },
+            fullnamn: {
+                pattern: /\b[A-ZÅÄÖ][a-zåäö]+\s+[A-ZÅÄÖ][a-zåäö]+(\s+[A-ZÅÄÖ][a-zåäö]+)?\b/g,
+                message: "fullständigt namn"
+            },
+            gatuadress: {
+                pattern: /\b[A-ZÅÄÖ][a-zåäö]+(?:gatan|vägen|stigen|gränden|plan|allén)\s+\d+[A-Za-z]?\b/gi,
+                message: "gatuadress"
+            },
+            postnummer: {
+                pattern: /\b\d{3}\s?\d{2}\b/g,
+                message: "postnummer"
+            }
+        };
+
+        function containsPII(text) {
+            const detectedTypes = [];
+            
+            for (const [type, config] of Object.entries(PII_PATTERNS)) {
+                const matches = text.match(config.pattern);
+                if (matches) {
+                    console.log(`PII detected (${type}):`, matches);
+                    detectedTypes.push(config.message);
+                }
+            }
+            
+            return detectedTypes;
+        }
+
+        function showPIIWarning(detectedTypes = []) {
+            const warning = document.getElementById('pii-warning');
+            const warningText = document.getElementById('pii-warning-text');
+            
+            if (detectedTypes.length > 0) {
+                warningText.innerHTML = `Din text innehåller <strong>${detectedTypes.join(', ')}</strong>. Ta bort all identifierbar information och försök igen.`;
+            } else {
+                warningText.textContent = 'Din text innehåller personuppgifter som inte får skickas. Ta bort all identifierbar information och försök igen.';
+            }
+            
+            warning.classList.add('error');
+            warning.classList.remove('hidden');
+            
+            setTimeout(() => {
+                warning.classList.add('hidden');
+                warning.classList.remove('error');
+            }, 7000);
+        }
+
+        function checkInputForPII() {
+            const input = document.getElementById('user-input');
+            const indicator = document.getElementById('piiIndicator');
+            const sendButton = document.getElementById('send-button');
+            
+            const detectedTypes = containsPII(input.value);
+            
+            if (detectedTypes.length > 0) {
+                input.classList.add('has-pii');
+                indicator.classList.add('show');
+                sendButton.disabled = true;
+                hasDetectedPII = true;
+            } else {
+                input.classList.remove('has-pii');
+                indicator.classList.remove('show');
+                sendButton.disabled = isLoading;
+                hasDetectedPII = false;
+            }
+        }
+
+        async function loadSocialtjanstlagen() {
+            try {
+                const response = await fetch('./data/lagtexter/socialtjanstlagen.txt');
+                if (response.ok) {
+                    socialtjanstlagen = await response.text();
+                    console.log('✓ Socialtjänstlagen laddad:', socialtjanstlagen.length, 'tecken');
+                } else {
+                    console.warn('Kunde inte ladda socialtjänstlagen från fil');
+                }
+            } catch (error) {
+                console.error('Fel vid laddning av socialtjänstlagen:', error);
+            }
+        }
+
+        function addMessage(content, isUser = false, hasLawReference = false) {
+            const container = document.getElementById('chat-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            
+            let lawReferenceHtml = '';
+            if (hasLawReference && !isUser) {
+                lawReferenceHtml = `
+                    <div class="law-reference">
+                        <strong>📖 Källa:</strong>
+                        Socialtjänstlagen (2001:453)
+                    </div>
+                `;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${isUser ? 'Du' : 'AI'}</div>
+                <div class="message-content">
+                    ${content}
+                    ${lawReferenceHtml}
+                </div>
+            `;
+            
+            container.appendChild(messageDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addLoadingMessage() {
+            const container = document.getElementById('chat-container');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message bot-message';
+            loadingDiv.id = 'loading-message';
+            loadingDiv.innerHTML = `
+                <div class="message-avatar">AI</div>
+                <div class="loading">
+                    <span>🤔 Analyserar lagtext...</span>
+                    <div class="loading-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(loadingDiv);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function removeLoadingMessage() {
+            const loading = document.getElementById('loading-message');
+            if (loading) loading.remove();
+        }
+
+        async function sendMessage() {
+            if (isLoading) return;
+            
+            const input = document.getElementById('user-input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            const detectedPII = containsPII(message);
+            if (detectedPII.length > 0) {
+                showPIIWarning(detectedPII);
+                return;
+            }
+
+            addMessage(message, true);
+            input.value = '';
+            input.style.height = 'auto';
+            checkInputForPII();
+            
+            isLoading = true;
+            document.getElementById('send-button').disabled = true;
+            addLoadingMessage();
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message: message,
+                        lawTexts: {
+                            socialtjanstlagen: socialtjanstlagen
+                        }
+                    })
+                });
+
+                removeLoadingMessage();
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    
+                    if (errorData.error === 'PII_DETECTED') {
+                        showPIIWarning();
+                        const messages = document.querySelectorAll('.message');
+                        if (messages.length > 1) {
+                            messages[messages.length - 1].remove();
+                        }
+                        addMessage('⚠️ Av säkerhetsskäl kunde ditt meddelande inte behandlas. Kontrollera att du inte inkluderat några personuppgifter och försök igen.', false);
+                    } else {
+                        throw new Error(`Backend-fel: ${response.status}`);
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+                addMessage(data.response, false, true);
+
+            } catch (error) {
+                removeLoadingMessage();
+                console.error('Fel:', error);
+                addMessage('😔 Något gick fel med anslutningen. Kontrollera din internetanslutning och försök igen.', false);
+            } finally {
+                isLoading = false;
+                document.getElementById('send-button').disabled = false;
+            }
+        }
+
+        document.getElementById('user-input').addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+            checkInputForPII();
+        });
+
+        document.getElementById('user-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (!hasDetectedPII) {
+                    sendMessage();
+                }
+            }
+        });
+
+        document.getElementById('send-button').addEventListener('click', sendMessage);
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            sidebar.classList.toggle('show');
+            overlay.classList.toggle('show');
+            document.body.style.overflow = sidebar.classList.contains('show') ? 'hidden' : '';
+        }
+
+        document.querySelectorAll('.sidebar a').forEach(link => {
+            link.addEventListener('click', () => {
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar.classList.contains('show')) toggleSidebar();
+            });
+        });
+
+        window.addEventListener('load', () => {
+            loadSocialtjanstlagen();
+            checkInputForPII();
+        });
+    </script>
+</body>
+</html>
