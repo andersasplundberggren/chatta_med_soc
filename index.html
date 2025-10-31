@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatta med socialtjänsten - Karlskoga kommun</title>
+    <title>Chatta med Socialtjänsten - Karlskoga kommun</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -254,7 +254,7 @@
             margin-bottom: 5px;
         }
 
-        /* === FORMATERING FÖR LISTOR OCH TEXT (NYTT!) === */
+        /* Formatering för listor och text */
         .message-content ul {
             margin: 12px 0;
             padding-left: 20px;
@@ -284,7 +284,6 @@
         .message-content p {
             margin: 10px 0;
         }
-        /* === SLUT PÅ NYTT === */
 
         .input-container {
             padding: 20px;
@@ -444,6 +443,24 @@
             text-align: left;
         }
 
+        .clear-history-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            margin-top: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .clear-history-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
         @media (max-width: 768px) {
             .global-header { padding: 15px 20px; }
             .logo { height: 35px; }
@@ -470,20 +487,53 @@
         }
     </style>
 </head>
+<body>
+    <nav class="global-header">
+        <div class="logo-section">
+            <img src="https://karlskoga.se/images/18.17cf90041722ce1749b5e/1640015633047/Karlskoga_liggande.png" alt="Karlskoga kommun" class="logo">
+            <a href="https://andersasplundberggren.github.io/ledarportalen/" class="logo-text">Ledarportalen</a>
+        </div>
+        <button class="menu-toggle" onclick="toggleSidebar()">
+            <span>☰</span>
+            <span>Meny</span>
+        </button>
+    </nav>
 
-    <!-- SLUT PÅ HEADER OCH SIDEBAR -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>Ledarportalen</h3>
+            <button class="close-btn" onclick="toggleSidebar()">✕</button>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="https://andersasplundberggren.github.io/ledarportalen/"><span>🏠</span><span>Hem</span></a></li>
+                <li><a href="https://andersasplundberggren.github.io/ledarportalen/chat.html"><span>💬</span><span>AI Chatt</span></a></li>
+                <li><a href="https://andersasplundberggren.github.io/ledarportalen/arshjul.html"><span>📅</span><span>Årshjul</span></a></li>
+                <li><a href="https://andersasplundberggren.github.io/ledarportalen/samtal.html"><span>👥</span><span>Medarbetarsamtal</span></a></li>
+                <li><a href="https://andersasplundberggren.github.io/ledarportalen/forbered.html"><span>📋</span><span>Förbered samtal</span></a></li>
+                <li><a href="https://andersasplundberggren.github.io/ledarportalen/kompetens.html"><span>🎓</span><span>Kompetens</span></a></li>
+                <li><a href="https://andersasplundberggren.github.io/ledarportalen/recruitment.html"><span>🔍</span><span>Rekrytering</span></a></li>
+                <li><a href="https://andersasplundberggren.github.io/ledarportalen/kommunikation.html"><span>📢</span><span>Kommunikation</span></a></li>
+            </ul>
+        </nav>
+    </aside>
 
     <div class="container">
         <div class="header">
-            <h1>💬 Chatta med socialtjänsten</h1>
+            <h1>💬 Chatta med Socialtjänsten</h1>
             <p class="warning">
-                📅 Baserad på <strong>nya Socialtjänstlagen (2025)</strong> som gäller från juli 2025<br>
+                📅 Baserad på <strong>nya Socialtjänstlagen (2025)</strong> som gäller från maj 2025<br>
                 🚫 <strong>VIKTIGT:</strong> Skriv ALDRIG personuppgifter! Inga personnummer, namn, adresser, telefon eller e-post.<br>
                 Chatten blockerar automatiskt meddelanden med personuppgifter.
             </p>
             <div class="sources-status" id="sourcesStatus">
                 📚 Laddar kunskapskällor...
             </div>
+            <button class="clear-history-btn" onclick="clearHistory()" title="Börja ny konversation">
+                🔄 Ny konversation
+            </button>
         </div>
         
         <div id="chat-container" class="chat-container">
@@ -492,12 +542,12 @@
                 <div class="message-content">
                     Hej! Jag är din AI-assistent för <strong>Karlskoga kommuns socialtjänst</strong>.<br><br>
                     📚 Jag kan hjälpa dig med frågor om:<br>
-                    • <strong>Nya Socialtjänstlagen (2025)</strong> - gäller från juli 2025<br>
+                    • <strong>Nya Socialtjänstlagen (2025)</strong> - gäller från maj 2025<br>
                     • Kommunens rutiner och riktlinjer<br>
                     • Organisation och ansvar<br>
                     • Handläggningsprocesser<br>
                     • Vanliga frågor och exempel<br><br>
-                    <strong>⚠️ Skydda personuppgifter:</strong> Använd <em>aldrig</em> namn, personnummer eller andra identifierande uppgifter. Formulera dina frågor generellt.<br><br>
+                    <strong>⚠️ Skydda personuppgifter:</strong> Använd <em>aldrig</em> riktiga namn, personnummer eller andra identifierande uppgifter. Formulera dina frågor generellt.<br><br>
                     <em>Exempel:</em> "Vilka regler gäller för biståndsbedömning?" istället för "Kan Anna Andersson få bistånd?"<br><br>
                     Vad vill du veta?
                 </div>
@@ -531,6 +581,7 @@
         let sourceConfig = null;
         let isLoading = false;
         let hasDetectedPII = false;
+        let conversationHistory = []; // NYTT - Sparar hela konversationen
 
         // === UTÖKAD PII-DETEKTION (Frontend - Första försvarslinjen) ===
         const PII_PATTERNS = {
@@ -617,6 +668,23 @@
             }
         }
 
+        // === RENSA HISTORIK (NYTT) ===
+        function clearHistory() {
+            if (confirm('Vill du börja en ny konversation? Tidigare meddelanden kommer inte längre att kommas ihåg.')) {
+                conversationHistory = [];
+                sessionStorage.removeItem('chatHistory');
+                console.log('✓ Konversationshistorik rensad');
+                
+                // Visa bekräftelse
+                const statusElement = document.getElementById('sourcesStatus');
+                const originalText = statusElement.textContent;
+                statusElement.textContent = '✅ Ny konversation startad';
+                setTimeout(() => {
+                    statusElement.textContent = originalText;
+                }, 2000);
+            }
+        }
+
         // === LADDA KÄLLOR ===
         async function loadSourceConfig() {
             try {
@@ -642,7 +710,6 @@
             let totalLoaded = 0;
             let totalFiles = 0;
             
-            // Räkna totalt antal filer
             for (const category of sourceConfig.sources) {
                 totalFiles += category.files.length;
             }
@@ -650,7 +717,6 @@
             console.log(`📚 Laddar ${totalFiles} källor...`);
             updateSourcesStatus(`Laddar ${totalFiles} källor...`);
             
-            // Ladda alla filer
             for (const category of sourceConfig.sources) {
                 console.log(`\n📂 Kategori: ${category.category}`);
                 
@@ -726,7 +792,7 @@
             loadingDiv.innerHTML = `
                 <div class="message-avatar">AI</div>
                 <div class="loading">
-                    <span>🤔 genererar svar...</span>
+                    <span>🤔 Genererar svar...</span>
                     <div class="loading-dots">
                         <span></span>
                         <span></span>
@@ -743,7 +809,7 @@
             if (loading) loading.remove();
         }
 
-        // === SKICKA MEDDELANDE ===
+        // === SKICKA MEDDELANDE (UPPDATERAD MED MINNE) ===
         async function sendMessage() {
             if (isLoading) return;
             
@@ -767,8 +833,13 @@
             document.getElementById('send-button').disabled = true;
             addLoadingMessage();
 
+            // NYTT - Lägg till användarens meddelande i historiken
+            conversationHistory.push({
+                role: 'user',
+                content: message
+            });
+
             try {
-                // Förbered källor att skicka
                 const sourcesToSend = {};
                 for (const [name, source] of Object.entries(allSources)) {
                     sourcesToSend[name] = source.content;
@@ -779,7 +850,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ 
                         message: message,
-                        sources: sourcesToSend
+                        sources: sourcesToSend,
+                        conversationHistory: conversationHistory  // NYTT - Skicka historiken
                     })
                 });
 
@@ -794,6 +866,8 @@
                         if (messages.length > 1) {
                             messages[messages.length - 1].remove();
                         }
+                        // Ta bort från historiken också
+                        conversationHistory.pop();
                         addMessage('⚠️ Av säkerhetsskäl kunde ditt meddelande inte behandlas. Kontrollera att du inte inkluderat några personuppgifter och försök igen.', false);
                     } else {
                         throw new Error(`Backend-fel: ${response.status}`);
@@ -803,7 +877,15 @@
 
                 const data = await response.json();
                 
-                // Identifiera vilka källor som användes (baserat på innehåll i svaret)
+                // NYTT - Lägg till AI:ns svar i historiken
+                conversationHistory.push({
+                    role: 'assistant',
+                    content: data.response
+                });
+
+                // NYTT - Spara historiken i sessionStorage
+                sessionStorage.setItem('chatHistory', JSON.stringify(conversationHistory));
+
                 const usedSources = Object.keys(allSources).filter(sourceName => {
                     const lowerMessage = message.toLowerCase();
                     const lowerResponse = data.response.toLowerCase();
@@ -816,6 +898,7 @@
             } catch (error) {
                 removeLoadingMessage();
                 console.error('Fel:', error);
+                conversationHistory.pop(); // Ta bort från historiken vid fel
                 addMessage('😔 Något gick fel med anslutningen. Kontrollera din internetanslutning och försök igen.', false);
             } finally {
                 isLoading = false;
@@ -861,11 +944,16 @@
         window.addEventListener('load', async () => {
             console.log('🚀 Startar applikation...');
             
-            // Ladda konfiguration först
+            // NYTT - Ladda sparad historik från sessionStorage
+            const savedHistory = sessionStorage.getItem('chatHistory');
+            if (savedHistory) {
+                conversationHistory = JSON.parse(savedHistory);
+                console.log('📜 Laddade tidigare konversation:', conversationHistory.length, 'meddelanden');
+            }
+            
             const configLoaded = await loadSourceConfig();
             
             if (configLoaded) {
-                // Ladda alla källor
                 allSources = await loadAllSources();
                 console.log('📊 Källor redo:', Object.keys(allSources).length);
             } else {
